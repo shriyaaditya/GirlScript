@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { FaBookOpen, FaPen, FaSearch, FaLightbulb, FaBookReader, FaGlobe, FaStar, FaLink } from "react-icons/fa";
 import { searchBooks, getAutocompleteSuggestions } from "../services/bookService";
+import { toast } from "react-toastify";
 import BookCard from "../components/BookCard";
 import NoBookFound from "../components/NoBookFound";
 import SearchAutocomplete from "../components/SearchAutocomplete";
@@ -150,6 +151,33 @@ export default function Explore() {
     setQuery(term);
     handleSearch({ preventDefault: () => { } }, term);
   };
+
+  const handleCreateBookGenerally = async (book) => {
+    console.log("Creating book generally:", book);
+    const info = book.volumeInfo;
+    const bookData = {
+      title: info.title,
+      authors: info.authors[0],
+      description: info.description,
+      google_book_id: book.id,
+      cover: info.imageLinks?.extraLarge || info.imageLinks?.large || info.imageLinks?.medium || info.imageLinks?.thumbnail,
+    }
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/genbook/create`, {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(bookData),
+    })
+    const data = await res.json();
+    if(data.success){
+      toast.success(data.message);
+    }else{
+      toast.error(data.message);
+      console.error("Error creating book:", data.message);
+    }
+  }
 
   return (
     <div className={styles.exploreContainer}>
@@ -374,7 +402,7 @@ export default function Explore() {
                       className="slide-in-animation"
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <BookCard book={book} />
+                      <BookCard book={book} onClick={() => handleCreateBookGenerally(book)} />
                     </div>
                   ))}
                 </div>
