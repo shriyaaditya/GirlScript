@@ -172,7 +172,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
   };
 
   const handleCreateBookGenerally = async (book) => {
-    console.log("Creating book generally:", book);
+    // console.log("Creating book generally:", book);
     const info = book.volumeInfo;
     const bookData = {
       title: info.title,
@@ -190,12 +190,12 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
       body: JSON.stringify(bookData),
     })
     const data = await res.json();
-    if(data.success){
-      toast.success(data.message);
-    }else{
-      toast.error(data.message);
-      console.error("Error creating book:", data.message);
-    }
+    // if(data.success){
+    //   toast.success(data.message);
+    // }else{
+    //   toast.error(data.message);
+    //   console.error("Error creating book:", data.message);
+    // }
   }
 
   return (

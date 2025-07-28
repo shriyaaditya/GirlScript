@@ -59,21 +59,21 @@ const ReportReviewModal = ({ isOpen, onClose, book_id, review_id, onRefresh }) =
         },
       }}
     >
-      <h2 className="text-lg font-bold mb-4">Report</h2>
+      <h2 className="text-lg font-bold !mb-4">Report</h2>
       <form onSubmit={handleSubmit}> 
         {/* Input field for doubt title */}
         <input 
         type="text" 
         onChange={(e) => setReason(e.target.value)}
         placeholder='Type your report reason here...'
-        className="w-full p-2 border rounded mb-4"
+        className="w-full !p-2 border rounded !mb-4"
         />
         {/* Textarea for doubt description */}
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Type your report description here..."
-          className="w-full p-2 border rounded mb-4"
+          className="w-full !p-2 border rounded !mb-4"
           rows="5"
         ></textarea>
 
@@ -82,13 +82,13 @@ const ReportReviewModal = ({ isOpen, onClose, book_id, review_id, onRefresh }) =
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            className="!px-4 !py-2 !bg-white rounded hover:!bg-blue-500 hover:text-white"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="!px-4 !py-2 !bg-white rounded hover:!bg-blue-500 hover:text-white"
           >
             Post
           </button>

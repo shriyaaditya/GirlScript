@@ -97,7 +97,7 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
 
   return (
     <>
-      <div className="bg-white shadow-md rounded-xl p-5 mb-4 hover:shadow-lg transition-shadow duration-300 max-w-xl mx-auto">
+      <div className="bg-white shadow-md rounded-xl !p-5 !mb-4 hover:shadow-lg transition-shadow duration-300 min-w-[600px] max-w-xl !mx-auto">
         <div className="flex justify-between items-center mb-2">
           <div>
             <h3 className="text-lg font-semibold text-gray-800">{userName || "Anonymous"}</h3>
@@ -113,7 +113,9 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
           </div>
         </div>
 
-        <p className="text-gray-700 text-sm mb-3 leading-relaxed">{review_text}</p>
+        <div className='bg-gray-50 !p-4 rounded-md shadow-inner !mt-2'>
+          <p className="text-gray-700 text-sm leading-relaxed">{review_text}</p>
+        </div>
         <div className="text-sm text-gray-500">
           <p>Posted on: {formatDate(createdAt)}</p>
           {updatedAt !== createdAt && (

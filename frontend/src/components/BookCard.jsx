@@ -102,8 +102,8 @@ export default function BookCard({ book, onClick }) {
 
 const handleClick = (e) => {
   e.preventDefault();
-  onClick?.(); // Wait for your API call to complete
-  navigate(`/book/${book.id}`); // Then go to the book page
+  onClick?.(); 
+  navigate(`/book/${book.id}`); 
 };
 
 

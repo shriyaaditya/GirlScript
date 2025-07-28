@@ -292,7 +292,7 @@ export default function BookDetail() {
                   </div>
                 </section>
               )}
-              <div className='grid md:grid-cols-2 !gap-6'>
+              <div className='grid grid-cols-1'>
                   {[
                     {
                       icon: '📝',
@@ -300,7 +300,7 @@ export default function BookDetail() {
                       description: 'Read and write detailed reviews from fellow readers'
                     },
                   ].map((feature, index) => (
-                    <Link to={`/book/${id}/reviews`} key={index} className="bg-gray-50 !p-6 rounded-lg shadow-sm flex items-start space-x-4">
+                    <Link to={`/book/${id}/reviews`} key={index} className="bg-gray-50 !p-6 rounded-lg shadow-sm flex items-start space-x-4 w-full">
                       <div className="text-4xl">{feature.icon}</div>
                       <div>
                         <h4 className="text-lg font-semibold text-gray-800 !mb-1">{feature.title}</h4>
