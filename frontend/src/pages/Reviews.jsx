@@ -3,12 +3,12 @@ import ReviewCard from '../components/Reviews/ReviewCard';
 import ReviewStats from '../components/Reviews/ReviewStats';
 import { useEffect, useState } from 'react';
 import ReviewModal from '../components/Reviews/ReviewModal';
-import { ID } from 'appwrite';
 
 const Reviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
     const { id } = useParams();
     const openReviewModal = () => setIsReviewModalOpen(true);
     const closeReviewModal = () => setIsReviewModalOpen(false);
@@ -40,7 +40,7 @@ const Reviews = () => {
 
         fetchReviews();
         setLoading(false);
-    }, []);
+    }, [refreshKey]);
 
     return (
         <div className="bg-gray-50 min-h-screen py-12 px-4 md:px-16">
@@ -53,11 +53,11 @@ const Reviews = () => {
             ) : (
                 <div>
                 {reviews.map((review, i) => (
-                    <ReviewCard key={i} user_id={review.user_id} book_id={review.book_id} rating={review.rating} review_text={review.review_text} />
+                    <ReviewCard key={i} user_id={review.user_id} book_id={review.book_id} rating={review.rating} review_text={review.review_text} createdAt={review.createdAt} updatedAt={review.updatedAt} isLiked={review.isLiked} likeCount={review.likeCount} review_id={review._id} onRefresh={() => setRefreshKey(prev => !prev)} />
                 ))}
             </div>
             )}
-            <ReviewModal isOpen={isReviewModalOpen} onClose={closeReviewModal} google_book_id={id} />
+            <ReviewModal isOpen={isReviewModalOpen} onClose={closeReviewModal} google_book_id={id} onRefresh={() => setRefreshKey(prev => !prev)} />
         </div>
     )
 }

@@ -1,5 +1,26 @@
 import mongoose from "mongoose";
 
+const reportSchema = new mongoose.Schema(
+    {
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        reason: {
+            type: String,
+            required: true,
+        },
+        desc: {
+            type: String,
+            required: true,
+        },
+    },
+    {
+        timestamps: true,
+    }
+)
+
 const reviewSchema = new mongoose.Schema(
     {
         user_id: {
@@ -22,9 +43,14 @@ const reviewSchema = new mongoose.Schema(
             min: 1,
             max: 5,
         },
+        likes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
+        reports: [reportSchema],
     }, {
-        timestamps: true,  //createdAt updatedAt
-    }
+    timestamps: true,  //createdAt updatedAt
+}
 );
 
 const genBookSchema = new mongoose.Schema(
@@ -49,7 +75,7 @@ const genBookSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        reviews: [reviewSchema], 
+        reviews: [reviewSchema],
     }
 );
 

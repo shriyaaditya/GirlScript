@@ -2,10 +2,11 @@ import { useState } from "react";
 import Modal from "react-modal"
 import { FaStar } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 Modal.setAppElement('#root');
 
-const ReviewModal = ({ isOpen, onClose, google_book_id }) => {
+const ReviewModal = ({ isOpen, onClose, google_book_id, onRefresh }) => {
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -30,8 +31,16 @@ const ReviewModal = ({ isOpen, onClose, google_book_id }) => {
         },
         body: JSON.stringify(reviewData),
     })
-
+    const data = await res.json();
+    if(data.success){
+        toast.success(data.message);
+    }else{
+        toast.error(data.message);
+    }
     onClose();
+    onRefresh();
+    setRating(0);
+    setReview("");
   }
 
   return (
