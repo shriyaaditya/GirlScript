@@ -295,8 +295,10 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
             {/* Loading State */}
             {loading && (
               <div className="text-center py-16">
-                <div className="glass-effect card-small max-w-md mx-auto border-subtle">
-                    <div className="pulse-animation text-6xl mb-6"><FaBookOpen className="mx-auto" /></div>
+                <div className="flex flex-col justify-center gap-y-1 glass-effect card-small max-w-md mx-auto border-subtle">
+                  <div className="pulse-animation text-6xl mb-6 flex flex-col justify-center items-center">
+                    <FaBookOpen className="mx-auto" />
+                  </div>
                   <h3
                     className="heading-tertiary mb-4"
                     style={{ color: "var(--text-primary)" }}
@@ -311,7 +313,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                   </p>
                   <div className="mt-6">
                     <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 h-2 rounded-full animate-pulse w-3/4"></div>
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 h-2 rounded-full w-3/4"></div>
                     </div>
                   </div>
                 </div>
