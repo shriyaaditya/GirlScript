@@ -132,20 +132,39 @@ export default function Explore() {
     }
   }, [searchParams, handleSearch]);
 
-  const popularSearches = [
-    "Harry Potter",
-    "Fiction",
-    "Self Help",
-    "Mystery",
-    "Romance",
-    "Science Fiction",
-    "Biography",
-    "History",
-    "Philosophy",
-    "Psychology",
-    "Business",
-    "Technology",
-  ];
+const popularBookSearches = [
+  "Harry Potter",
+  "Fiction",
+  "Self Help",
+  "Mystery",
+  "Romance",
+  "Science Fiction",
+  "Biography",
+  "History",
+  "Philosophy",
+  "Psychology",
+  "Business",
+  "Technology",
+];
+
+const famousAuthors = [
+  "J.K. Rowling",
+  "Agatha Christie",
+  "Stephen King",
+  "Paulo Coelho",
+  "George Orwell",
+  "Jane Austen",
+  "Mark Twain",
+  "C.S. Lewis",
+  "Leo Tolstoy",
+  "Ernest Hemingway",
+  "Dan Brown",
+  "Haruki Murakami",
+];
+
+
+const popularSearches = searchType === 'books' ? popularBookSearches : famousAuthors;
+
 
   const handleQuickSearch = (term) => {
     setQuery(term);
@@ -276,13 +295,13 @@ export default function Explore() {
             </form>
 
             {/* Quick Filters */}
-            <div className="popular-searches-section mt-8">
-                <h3
-                  className="font-semibold mb-6 text-center"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Popular Searches
-                </h3>
+            <h3
+  className="font-semibold mb-6 text-center"
+  style={{ color: "var(--text-primary)" }}
+>
+  {searchType === 'books' ? 'Popular Searches' : 'Famous Authors'}
+</h3>
+
                 <div className="search-button-grid">
                   {popularSearches.map((term) => (
                     <button
@@ -296,7 +315,6 @@ export default function Explore() {
                 </div>
               </div>
             </div>
-          </div>
         </section>
 
         {/* Results Section */}

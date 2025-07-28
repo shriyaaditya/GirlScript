@@ -1802,6 +1802,16 @@ body {
   border-bottom: 2px solid var(--primary-700);
 }
 
+/* Fix for active navbar tab with green background - ensure white text is visible */
+.navbar-link.text-white {
+  color: white !important;
+}
+
+/* Fix for active navbar tab hover state - ensure green text is visible on white background */
+.navbar-link.text-white:hover {
+  color: var(--primary-700) !important;
+}
+
 /* --- Theme Toggle --- */
 .theme-toggle {
   background: none;
