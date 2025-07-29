@@ -150,8 +150,8 @@ export default function BookCard({ book }) {
 
             {/* Title */}
             <h3 className="font-bold text-gray-900 text-lg leading-tight mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2 min-h-[50px]">
-              {info.description
-                ? `${info.description.replace(/<[^>]*>/g, "").substring(0, 60)}${info.description.replace(/<[^>]*>/g, "").length > 60 ? "..." : ""}`
+              {info.title
+                ? `${info.title.replace(/<[^>]*>/g, "").substring(0, 60)}${info.title.replace(/<[^>]*>/g, "").length > 60 ? "..." : ""}`
                 : "No description available for this book."
               }
             </h3>
