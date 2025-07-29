@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
@@ -8,22 +8,55 @@ import { GiInspiration } from "react-icons/gi";
 import { TbTargetArrow } from "react-icons/tb";
 
 export default function Home() {
+  const sectionsRef = useRef([]);
+
   useEffect(() => {
-  if (sessionStorage.getItem("showLoginToast") === "true") {
-    toast.success("Logged in successfully!", { autoClose: 3000 });
-    sessionStorage.removeItem("showLoginToast");
-  }
+    if (sessionStorage.getItem("showLoginToast") === "true") {
+      toast.success("Logged in successfully!", { autoClose: 3000 });
+      sessionStorage.removeItem("showLoginToast");
+    }
 
-  if (sessionStorage.getItem("showSignupToast") === "true") {
-    toast.success("Signed up successfully!", { autoClose: 3000 });
-    sessionStorage.removeItem("showSignupToast");
-  }
+    if (sessionStorage.getItem("showSignupToast") === "true") {
+      toast.success("Signed up successfully!", { autoClose: 3000 });
+      sessionStorage.removeItem("showSignupToast");
+    }
 
-  if (sessionStorage.getItem("showLogoutToast") === "true") {
-    toast.success("Logged out successfully!", { autoClose: 3000 });
-    sessionStorage.removeItem("showLogoutToast");
-  }
-}, []);
+    if (sessionStorage.getItem("showLogoutToast") === "true") {
+      toast.success("Logged out successfully!", { autoClose: 3000 });
+      sessionStorage.removeItem("showLogoutToast");
+    }
+  }, []);
+
+  // Scroll reveal effect
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    sectionsRef.current.forEach((section) => {
+      if (section) {
+        observer.observe(section);
+      }
+    });
+
+    return () => {
+      sectionsRef.current.forEach((section) => {
+        if (section) {
+          observer.unobserve(section);
+        }
+      });
+    };
+  }, []);
 
   // Inject Chatbase script on page load
   useEffect(() => {
@@ -58,10 +91,82 @@ export default function Home() {
     `;
     document.body.appendChild(script);
 
+    // Add CSS for scroll reveal animations
+    const style = document.createElement('style');
+    style.textContent = `
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal.reveal-active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .scroll-reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      
+      .scroll-reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      
+      .scroll-reveal-delay-3 {
+        transition-delay: 0.3s;
+      }
+      
+      .scroll-reveal-delay-4 {
+        transition-delay: 0.4s;
+      }
+      
+      .scroll-reveal-scale {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-scale.reveal-active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+      
+      .scroll-reveal-slide-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-left.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .scroll-reveal-slide-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-right.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    `;
+    document.head.appendChild(style);
+
     return () => {
       document.body.removeChild(script);
+      document.head.removeChild(style);
     };
   }, []);
+
+  const addToRefs = (el) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -97,7 +202,7 @@ export default function Home() {
                 color: "#fff",
                 boxShadow: "none",
                 ...(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-                  ? { background: "#115e59" } // darker teal for dark mode
+                  ? { background: "#115e59" }
                   : {})
               }}
             >
@@ -117,9 +222,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="section-padding">
+      <section className="section-padding scroll-reveal" ref={addToRefs}>
         <div className="container-lg">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 scroll-reveal scroll-reveal-delay-1" ref={addToRefs}>
             <h2
               className="cta-2"
               style={{ color: "var(--primary-700)" }}
@@ -136,7 +241,11 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-12">
-            <div className="book-card animate-scale-in" data-tour="why-choose-pouranik-section">
+            <div 
+              className="book-card animate-scale-in scroll-reveal-scale scroll-reveal-delay-1" 
+              data-tour="why-choose-pouranik-section"
+              ref={addToRefs}
+            >
               <div className="smart-search-icon"><IoSearch /></div>
               <h3
                 className="h3"
@@ -153,7 +262,10 @@ export default function Home() {
                 intelligent filters and recommendations.
               </p>
             </div>
-            <div className="book-card animate-scale-in delay-200">
+            <div 
+              className="book-card animate-scale-in delay-200 scroll-reveal-scale scroll-reveal-delay-2"
+              ref={addToRefs}
+            >
               <div className="category-icon"><TbCategory /></div>
               <h3
                 className="h3"
@@ -170,7 +282,10 @@ export default function Home() {
                 curated collections.
               </p>
             </div>
-            <div className="book-card animate-scale-in delay-400">
+            <div 
+              className="book-card animate-scale-in delay-400 scroll-reveal-scale scroll-reveal-delay-3"
+              ref={addToRefs}
+            >
               <div className="inspiration-icon"><GiInspiration /></div>
               <h3
                 className="h3"
@@ -192,9 +307,16 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="section-padding-sm">
+      <section 
+        className="section-padding-sm scroll-reveal scroll-reveal-slide-left"
+        ref={addToRefs}
+      >
         <div className="container-md">
-          <div className="card-modern text-center" data-tour="powered-by-google-books-section">
+          <div 
+            className="card-modern text-center scroll-reveal-scale scroll-reveal-delay-1" 
+            data-tour="powered-by-google-books-section"
+            ref={addToRefs}
+          >
             <h3
               className="text-2xl font-semibold mb-8"
               style={{ color: "var(--primary-700)" }}
@@ -202,7 +324,7 @@ export default function Home() {
               Powered by Google Books
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
+              <div className="text-center scroll-reveal scroll-reveal-delay-2" ref={addToRefs}>
                 <div
                   className="text-5xl font-bold mb-2"
                   style={{ color: "var(--accent-orange)" }}
@@ -216,7 +338,7 @@ export default function Home() {
                   Books Available
                 </div>
               </div>
-              <div className="text-center">
+              <div className="text-center scroll-reveal scroll-reveal-delay-3" ref={addToRefs}>
                 <div
                   className="text-5xl font-bold mb-2"
                   style={{ color: "var(--accent-orange)" }}
@@ -230,7 +352,7 @@ export default function Home() {
                   Languages
                 </div>
               </div>
-              <div className="text-center">
+              <div className="text-center scroll-reveal scroll-reveal-delay-4" ref={addToRefs}>
                 <div
                   className="text-5xl font-bold mb-2"
                   style={{ color: "var(--accent-orange)" }}
@@ -250,15 +372,19 @@ export default function Home() {
       </section>
 
       {/* Call to Action */}
-      <section className="section-padding">
+      <section 
+        className="section-padding scroll-reveal scroll-reveal-slide-right"
+        ref={addToRefs}
+      >
         <div className="container-md">
           <div
-            className="card-modern text-center"
+            className="card-modern text-center scroll-reveal-scale scroll-reveal-delay-1"
             style={{
               background:
                 "linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%)",
               border: "1px solid var(--primary-200)",
             }}
+            ref={addToRefs}
           >
             <h3
               className="text-3xl font-bold mb-6"
@@ -275,15 +401,16 @@ export default function Home() {
             </p>
             <Link
               to="/explore"
-              className="button-primary inline-flex items-center gap-3 no-underline px-10 py-5 text-xl"
+              className="button-primary inline-flex items-center gap-3 no-underline px-10 py-5 text-xl scroll-reveal scroll-reveal-delay-2"
               data-tour="find-next-books-section"
               style={{
                 background: `var(--accent-orange)`,
                 color: "#fff",
                 ...(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-                  ? { background: "#115e59" } // darker teal for dark mode
+                  ? { background: "#115e59" }
                   : {})
               }}
+              ref={addToRefs}
             >
               <span className="target-icon"><TbTargetArrow /></span>
               <span>Find Your Next Book</span>

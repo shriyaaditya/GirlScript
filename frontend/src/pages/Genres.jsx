@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 const genres = [
@@ -134,21 +134,184 @@ const booksCover = [
 ]
 
 export default function Genres() {
+  const sectionsRef = useRef([]);
+
+  // Scroll reveal effect
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    sectionsRef.current.forEach((section) => {
+      if (section) {
+        observer.observe(section);
+      }
+    });
+
+    return () => {
+      sectionsRef.current.forEach((section) => {
+        if (section) {
+          observer.unobserve(section);
+        }
+      });
+    };
+  }, []);
+
+  // Add CSS for scroll reveal animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal.reveal-active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .scroll-reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      
+      .scroll-reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      
+      .scroll-reveal-delay-3 {
+        transition-delay: 0.3s;
+      }
+      
+      .scroll-reveal-delay-4 {
+        transition-delay: 0.4s;
+      }
+      
+      .scroll-reveal-scale {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-scale.reveal-active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+      
+      .scroll-reveal-slide-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-left.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .scroll-reveal-slide-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-right.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .scroll-reveal-fade {
+        opacity: 0;
+        transition: all 0.6s ease-out;
+      }
+      
+      .scroll-reveal-fade.reveal-active {
+        opacity: 1;
+      }
+      
+      .scroll-reveal-stagger > * {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-stagger.reveal-active > *:nth-child(1) { transition-delay: 0.0s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(2) { transition-delay: 0.1s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(3) { transition-delay: 0.2s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(4) { transition-delay: 0.3s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(5) { transition-delay: 0.4s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(6) { transition-delay: 0.5s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(7) { transition-delay: 0.6s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(8) { transition-delay: 0.7s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(9) { transition-delay: 0.8s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(10) { transition-delay: 0.9s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(11) { transition-delay: 1.0s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(12) { transition-delay: 1.1s; }
+      
+      .scroll-reveal-stagger.reveal-active > * {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      
+      .scroll-reveal-books-stagger > * {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(1) { transition-delay: 0.1s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(2) { transition-delay: 0.2s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(3) { transition-delay: 0.3s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(4) { transition-delay: 0.4s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(5) { transition-delay: 0.5s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(6) { transition-delay: 0.6s; }
+      .scroll-reveal-books-stagger.reveal-active > *:nth-child(7) { transition-delay: 0.7s; }
+      
+      .scroll-reveal-books-stagger.reveal-active > * {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  const addToRefs = (el) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  };
 
   return (
     <div className="min-h-screen asd">
       {/* Header Section */}
-      <section className="page-hero section-spacing-small">
+      <section className={`page-hero section-spacing-small scroll-reveal`} ref={addToRefs}>
         <div className="container-modern flex flex-col justify-center items-center text-center">
           <h1
-            className="heading-primary mb-6 floating-animation"
+            className={`heading-primary mb-6 floating-animation scroll-reveal-delay-1`}
             style={{ color: "var(--primary-700)" }}
+            ref={addToRefs}
           >
             📑 Explore Genre's
           </h1>
           <p
-            className="text-body-large max-w-3xl mx-auto mb-8"
+            className={`text-body-large max-w-3xl mx-auto mb-8 scroll-reveal-delay-2`}
             style={{ color: "var(--text-secondary)" }}
+            ref={addToRefs}
           >
             Discover books by your favorite categories and explore new literary
             territories. Each genre offers a unique journey into different
@@ -156,7 +319,7 @@ export default function Genres() {
           </p>
 
           {/* Stats */}
-          <div className="glass-effect card-small max-w-2xl mx-auto border-subtle">
+          <div className={`glass-effect card-small max-w-2xl mx-auto border-subtle scroll-reveal-scale scroll-reveal-delay-3`} ref={addToRefs}>
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
                 <div
@@ -206,9 +369,9 @@ export default function Genres() {
       </section>
 
       {/* Genres Grid */}
-      <section className="section-spacing-small">
+      <section className={`section-spacing-small scroll-reveal`} ref={addToRefs}>
         <div className="container-modern">
-          <div className="grid-modern grid-3">
+          <div className={`grid-modern grid-3 scroll-reveal-stagger`} ref={addToRefs}>
             {genres.map((genre, index) => {
               const delay = `${index * 0.1}s`;
 
@@ -272,24 +435,26 @@ export default function Genres() {
       </section>
 
       {/* Call to Action */}
-      <section className="p-[80px]  flex justify-center items-center">
+      <section className={`p-[80px] flex justify-center items-center scroll-reveal scroll-reveal-scale`} ref={addToRefs}>
         <div className="flex flex-col justify-center max-w-2xl text-center">
           <div className="glass-effect-strong card-modern flex flex-col gap-y-2 border-gradient">
-            <div className="text-5xl mb-6 floating-animation">🔍</div>
+            <div className={`text-5xl mb-6 floating-animation scroll-reveal-delay-1`} ref={addToRefs}>🔍</div>
             <h3
-              className="heading-secondary mb-6"
+              className={`heading-secondary mb-6 scroll-reveal-delay-2`}
               style={{ color: "var(--primary-700)" }}
+              ref={addToRefs}
             >
               Can't Find Your Perfect Genre?
             </h3>
             <p
-              className="text-body-large mb-8 max-w-lg mx-auto"
+              className={`text-body-large mb-8 max-w-lg mx-auto scroll-reveal-delay-3`}
               style={{ color: "var(--text-secondary)" }}
+              ref={addToRefs}
             >
               Use our advanced search to find books by specific topics, authors,
               keywords, or even ISBN numbers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className={`flex flex-col sm:flex-row gap-4 justify-center scroll-reveal-delay-4`} ref={addToRefs}>
               <Link
                 to="/explore"
                 className="button-primary inline-flex items-center gap-3 no-underline"
@@ -310,16 +475,16 @@ export default function Genres() {
       </section>
 
       {/* Popular Combinations */}
-      <section className="!py-16">
+      <section className={`!py-16 scroll-reveal`} ref={addToRefs}>
         <div className="container-modern">
           <div className="text-center mb-12">
-            <h3 className="heading-tertiary text-gray-500 font-semibold text-2xl !mb-12">
+            <h3 className={`heading-tertiary text-gray-500 font-semibold text-2xl !mb-12 scroll-reveal-delay-1`} ref={addToRefs}>
               Popular Genre Combinations
             </h3>
 
             {/* Book covers grid */}
-            <div className=" mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+            <div className="mx-auto">
+              <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center scroll-reveal-books-stagger scroll-reveal-delay-2`} ref={addToRefs}>
                 {booksCover.map(({ title, img, link, type }) => (
                   <div
                     key={title}

@@ -19,6 +19,7 @@ export default function Explore() {
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [searchType, setSearchType] = useState('books'); // 'books' or 'authors'
   const debounceTimerRef = useRef(null);
+  const sectionsRef = useRef([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1); // Changed to 1-based for UI
@@ -27,6 +28,144 @@ export default function Explore() {
 
   // Calculate total pages
   const totalPages = Math.ceil(totalItems / maxResultsPerPage);
+
+  // Scroll reveal effect
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    sectionsRef.current.forEach((section) => {
+      if (section) {
+        observer.observe(section);
+      }
+    });
+
+    return () => {
+      sectionsRef.current.forEach((section) => {
+        if (section) {
+          observer.unobserve(section);
+        }
+      });
+    };
+  }, []);
+
+  // Add CSS for scroll reveal animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal.reveal-active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .scroll-reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      
+      .scroll-reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      
+      .scroll-reveal-delay-3 {
+        transition-delay: 0.3s;
+      }
+      
+      .scroll-reveal-delay-4 {
+        transition-delay: 0.4s;
+      }
+      
+      .scroll-reveal-scale {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-scale.reveal-active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+      
+      .scroll-reveal-slide-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-left.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .scroll-reveal-slide-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-slide-right.reveal-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .scroll-reveal-fade {
+        opacity: 0;
+        transition: all 0.6s ease-out;
+      }
+      
+      .scroll-reveal-fade.reveal-active {
+        opacity: 1;
+      }
+      
+      .scroll-reveal-stagger > * {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .scroll-reveal-stagger.reveal-active > *:nth-child(1) { transition-delay: 0.1s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(2) { transition-delay: 0.2s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(3) { transition-delay: 0.3s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(4) { transition-delay: 0.4s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(5) { transition-delay: 0.5s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(6) { transition-delay: 0.6s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(7) { transition-delay: 0.7s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(8) { transition-delay: 0.8s; }
+      .scroll-reveal-stagger.reveal-active > *:nth-child(9) { transition-delay: 0.9s; }
+      
+      .scroll-reveal-stagger.reveal-active > * {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  const addToRefs = (el) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  };
 
   // Function to handle page changes
   const handlePageChange = (newPage) => {
@@ -173,15 +312,15 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
   return (
     <div className={styles.exploreContainer}>
       {/* Header Section */}
-      <section className={styles.heroSection}>
+      <section className={`${styles.heroSection} scroll-reveal`} ref={addToRefs}>
         <div className={styles.heroContent}>
-          <div className={styles.headingContainer}>
+          <div className={`${styles.headingContainer} scroll-reveal-delay-1`} ref={addToRefs}>
             <h1 className={styles.heading}>
               <FiSearch className={styles.searchIcon} />
               <span>Explore Books</span>
             </h1>
           </div>
-          <p className={styles.subHeading}>
+          <p className={`${styles.subHeading} scroll-reveal-delay-2`} ref={addToRefs}>
             Search through millions of books and discover your next favorite
             read. Use our advanced search to find exactly what you're looking
             for.
@@ -190,11 +329,11 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
       </section>
 
       {/* Search Section */}
-      <section className={styles.searchSection}>
+      <section className={`${styles.searchSection} scroll-reveal scroll-reveal-scale`} ref={addToRefs}>
         <div className={styles.searchContainer}>
           <div className="glass-effect-strong card-modern border-medium p-8">
             <form onSubmit={handleSearch} className={styles.searchForm}>
-              <div className={styles.searchTypeToggle}>
+              <div className={`${styles.searchTypeToggle} scroll-reveal-fade scroll-reveal-delay-1`} ref={addToRefs}>
                 <button
                   type="button"
                   onClick={() => {
@@ -221,7 +360,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                 </button>
               </div>
 
-              <div className="relative w-full max-w-2xl mx-auto">
+              <div className={`relative w-full max-w-2xl mx-auto scroll-reveal scroll-reveal-delay-2`} ref={addToRefs}>
                 <input
                   className="input-modern w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   type="text"
@@ -245,7 +384,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                 />
               </div>
               
-              <div className="w-full max-w-2xl mx-auto">
+              <div className={`w-full max-w-2xl mx-auto scroll-reveal scroll-reveal-delay-3`} ref={addToRefs}>
                 <button
                   type="submit"
                   className={`mt-6 button-primary w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -267,139 +406,142 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
             </form>
 
             {/* Quick Filters */}
-            <h3
-  className="font-semibold mb-6 text-center"
-  style={{ color: "var(--text-primary)" }}
->
-  {searchType === 'books' ? 'Popular Searches' : 'Famous Authors'}
-</h3>
+            <div className={`scroll-reveal scroll-reveal-delay-4`} ref={addToRefs}>
+              <h3
+                className="font-semibold mb-6 text-center"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {searchType === 'books' ? 'Popular Searches' : 'Famous Authors'}
+              </h3>
 
-                <div className="search-button-grid">
-                  {popularSearches.map((term) => (
-                    <button
-                      key={term}
-                      onClick={() => handleQuickSearch(term)}
-                      className="search-button"
-                    >
-                      {term}
-                    </button>
-                  ))}
+              <div className={`search-button-grid scroll-reveal-stagger`} ref={addToRefs}>
+                {popularSearches.map((term) => (
+                  <button
+                    key={term}
+                    onClick={() => handleQuickSearch(term)}
+                    className="search-button"
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Results Section */}
+      <section className="pb-16 results-section">
+        <div className="container-modern flex flex-col items-center">
+          {/* Loading State */}
+          {loading && (
+            <div className={`text-center py-16 scroll-reveal scroll-reveal-scale`} ref={addToRefs}>
+              <div className="flex flex-col justify-center gap-y-1 glass-effect card-small max-w-md mx-auto border-subtle">
+                <div className="pulse-animation text-6xl mb-6 flex flex-col justify-center items-center">
+                  <FaBookOpen className="mx-auto" />
+                </div>
+                <h3
+                  className="heading-tertiary mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Searching Books
+                </h3>
+                <p
+                  className="text-body"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Finding the perfect books for you...
+                </p>
+                <div className="mt-6">
+                  <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-400 h-2 rounded-full w-3/4"></div>
+                  </div>
                 </div>
               </div>
             </div>
-        </section>
+          )}
 
-        {/* Results Section */}
-        <section className="pb-16 results-section">
-          <div className="container-modern flex flex-col items-center">
-            {/* Loading State */}
-            {loading && (
-              <div className="text-center py-16">
-                <div className="flex flex-col justify-center gap-y-1 glass-effect card-small max-w-md mx-auto border-subtle">
-                  <div className="pulse-animation text-6xl mb-6 flex flex-col justify-center items-center">
-                    <FaBookOpen className="mx-auto" />
-                  </div>
+          {/* No Results */}
+          {searched && !loading && books.length === 0 && (
+            <div className={`text-center py-16 scroll-reveal scroll-reveal-scale`} ref={addToRefs}>
+              <div className="glass-effect card-modern flex flex-col items-center md:flex-row max-w-5xl mx-auto border-subtle">
+                <div>
+                  <NoBookFound />
                   <h3
-                    className="heading-tertiary mb-4"
+                    className="text-heading-2 mb-4"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    Searching Books
+                    No Books Found
                   </h3>
+                </div>
+                <div className="flex flex-col items-center justify-center p-8 gap-y-8">
                   <p
-                    className="text-body"
+                    className="text-body mb-6"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    Finding the perfect books for you...
+                    We couldn't find any books matching your search. Try different
+                    keywords or browse our popular genres.
                   </p>
-                  <div className="mt-6">
-                    <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 h-2 rounded-full w-3/4"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* No Results */}
-            {searched && !loading && books.length === 0 && (
-              <div className="text-center py-16">
-                <div className="glass-effect card-modern flex flex-col items-center md:flex-row max-w-5xl mx-auto border-subtle">
-                  <div>
-                    <NoBookFound />
-                    <h3
-                      className="text-heading-2 mb-4"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      No Books Found
-                    </h3>
-                  </div>
-                  <div className="flex flex-col items-center justify-center p-8 gap-y-8">
-                    <p
-                      className="text-body mb-6"
-                      style={{ color: "var(--text-secondary)" }}
-                    >
-                      We couldn't find any books matching your search. Try different
-                      keywords or browse our popular genres.
+                  <div className="space-y-8">
+                    <p className="glass-effect text-xs !p-3 rounded-xl !border !border-red-400 border-opacity-30">
+                      <FaLightbulb className="inline mr-1" /> Make sure your Google Books API key is properly
+                      configured
                     </p>
-                    <div className="space-y-8">
-                      <p className="glass-effect text-xs !p-3 rounded-xl !border !border-red-400 border-opacity-30">
-                        <FaLightbulb className="inline mr-1" /> Make sure your Google Books API key is properly
-                        configured
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <button
-                          onClick={() => {
-                            setQuery("");
-                            setSearched(false);
-                            setBooks([]);
-                          }}
-                          className="button-secondary !hover:text-white"
-                        >
-                          Clear Search
-                        </button>
-                        <Link
-                          to="/genres"
-                          className="button-primary !hover:text-white no-underline text-center"
-                        >
-                          Browse Genres
-                        </Link>
-                      </div>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <button
+                        onClick={() => {
+                          setQuery("");
+                          setSearched(false);
+                          setBooks([]);
+                        }}
+                        className="button-secondary !hover:text-white"
+                      >
+                        Clear Search
+                      </button>
+                      <Link
+                        to="/genres"
+                        className="button-primary !hover:text-white no-underline text-center"
+                      >
+                        Browse Genres
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {books.length > 0 && (
-              <div className="w-full !my-16">
-                <div className="text-left mb-12">
-                  <h2
-                    className="heading-secondary !mb-4"
-                    style={{ color: "var(--primary-700)" }}
+          {books.length > 0 && (
+            <div className={`w-full !my-16 scroll-reveal`} ref={addToRefs}>
+              <div className={`text-left mb-12 scroll-reveal-delay-1`} ref={addToRefs}>
+                <h2
+                  className="heading-secondary !mb-4"
+                  style={{ color: "var(--primary-700)" }}
+                >
+                  Found {totalItems} Amazing Books! <FaBookOpen className="inline ml-1" />
+                </h2>
+                <p
+                  className="text-body !mb-3"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  {query && `Results for "${query}"`}
+                </p>
+              </div>
+
+              <div className={`grid-modern grid-3 scroll-reveal-stagger scroll-reveal-delay-2`} ref={addToRefs}>
+                {books.map((book, index) => (
+                  <div
+                    key={book.id || index}
+                    className="slide-in-animation"
+                    style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    Found {totalItems} Amazing Books! <FaBookOpen className="inline ml-1" />
-                  </h2>
-                  <p
-                    className="text-body !mb-3"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {query && `Results for "${query}"`}
-                  </p>
-                </div>
+                    <BookCard book={book} />
+                  </div>
+                ))}
+              </div>
 
-                <div className="grid-modern grid-3">
-                  {books.map((book, index) => (
-                    <div
-                      key={book.id || index}
-                      className="slide-in-animation"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      <BookCard book={book} />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Pagination */}
+              {/* Pagination */}
+              <div className={`scroll-reveal scroll-reveal-delay-3`} ref={addToRefs}>
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -407,46 +549,47 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                   loading={loading}
                 />
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Welcome State */}
-            {!searched && !loading && (
-              <div className={styles.welcomeSection}>
-                <div className={`${styles.glassEffect} ${styles.welcomeCard}`}>
-                  <div className={styles.welcomeIconContainer}>
-                    <FaBookReader className={styles.welcomeIcon} />
-                  </div>
-                  <h3 className={styles.welcomeTitle}>
-                    Start Your Book Discovery Journey
-                  </h3>
-                  <p className={styles.welcomeSubtitle}>
-                    Enter a book title, author name, or topic in the search box
-                    above to begin exploring our vast collection.
-                  </p>
-                  <div className={styles.featureGridContainer}>
-                    <div className={styles.featureGrid}>
-                      {[
-                        { icon: <FaBookOpen className={styles.featureIcon} />, label: "40M+ Books" },
-                        { icon: <FaGlobe className={styles.featureIcon} />, label: "100+ Languages" },
-                        { icon: <FaStar className={styles.featureIcon} />, label: "Rated & Reviewed" },
-                        { icon: <FaLink className={styles.featureIcon} />, label: "Preview Links" },
-                      ].map((feature, index) => (
-                        <div key={index} className={styles.featureItem}>
-                          <div className={styles.featureIconContainer}>
-                            {feature.icon}
-                          </div>
-                          <div className={styles.featureLabel}>
-                            {feature.label}
-                          </div>
+          {/* Welcome State */}
+          {!searched && !loading && (
+            <div className={`${styles.welcomeSection} scroll-reveal scroll-reveal-scale`} ref={addToRefs}>
+              <div className={`${styles.glassEffect} ${styles.welcomeCard}`}>
+                <div className={`${styles.welcomeIconContainer} scroll-reveal-delay-1`} ref={addToRefs}>
+                  <FaBookReader className={styles.welcomeIcon} />
+                </div>
+                <h3 className={`${styles.welcomeTitle} scroll-reveal scroll-reveal-delay-2`} ref={addToRefs}>
+                  Start Your Book Discovery Journey
+                </h3>
+                <p className={`${styles.welcomeSubtitle} scroll-reveal scroll-reveal-delay-3`} ref={addToRefs}>
+                  Enter a book title, author name, or topic in the search box
+                  above to begin exploring our vast collection.
+                </p>
+                <div className={`${styles.featureGridContainer} scroll-reveal scroll-reveal-delay-4`} ref={addToRefs}>
+                  <div className={`${styles.featureGrid} scroll-reveal-stagger`} ref={addToRefs}>
+                    {[
+                      { icon: <FaBookOpen className={styles.featureIcon} />, label: "40M+ Books" },
+                      { icon: <FaGlobe className={styles.featureIcon} />, label: "100+ Languages" },
+                      { icon: <FaStar className={styles.featureIcon} />, label: "Rated & Reviewed" },
+                      { icon: <FaLink className={styles.featureIcon} />, label: "Preview Links" },
+                    ].map((feature, index) => (
+                      <div key={index} className={styles.featureItem}>
+                        <div className={styles.featureIconContainer}>
+                          {feature.icon}
                         </div>
-                      ))}
-                    </div>
+                        <div className={styles.featureLabel}>
+                          {feature.label}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-        </section>
-      </div>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   );
 }
