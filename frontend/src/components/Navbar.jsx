@@ -95,9 +95,15 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               </Link>
             ))}
             {isLoggedIn ? (
-              <button onClick={handleLogout} className="theme-toggle">Logout</button>
+              <button onClick={handleLogout} className="theme-toggle ">Logout</button>
             ) : (
-              <Link to="/signup" className="navbar-link">Get Started</Link>
+              <Link to="/signup"   className={`navbar-link
+                ${
+                  isActive("/signup")
+                    ? "bg-[#0f766e] text-white"
+                    : "hover:underline hover:text-[#0f766e]"
+                }
+                `}>Get Started</Link>
             )}
             <button
               onClick={toggleTheme}

@@ -7,7 +7,7 @@ import AboutUs from '../pages/about';
 import Library from '../pages/Library';
 import SignIn from '../pages/SignIn';
 
-export default function AppRoutes() {
+export default function AppRoutes({ isDarkMode }) {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -16,7 +16,7 @@ export default function AppRoutes() {
       <Route path="/explore" element={<Explore />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path='/library' element={<Library />} />
-      <Route path='/signup' element={<SignIn />} />
+      <Route path='/signup' element={<SignIn isDarkMode={isDarkMode} />} />
     </Routes>
   );
 }
