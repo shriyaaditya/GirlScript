@@ -98,8 +98,8 @@ function App() {
     localStorage.setItem("isOldUser", "true")
   }
 
-  return (
-    <div className="app-gradient">
+return (
+  <div className={`app-gradient ${isDarkMode ? 'dark' : ''}`}>
       <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <main className="main-content">
         <div className="page-wrapper">

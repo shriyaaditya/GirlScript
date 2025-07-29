@@ -22,7 +22,7 @@ const SignIn = () => {
               <p className="text-xl">Sign-In</p>
               <AuthForm formType={formType} />
               <p>Don't have an account ? 
-                <button className='cursor-pointer bg-white !py-1 !mx-2' onClick=  {handleChangeFormType} >Sign-Up</button>
+                <button className='cursor-pointer text-white bg-black !py-1 !mx-2' onClick=  {handleChangeFormType} >Sign-Up</button>
               </p>
             </section>
           )
@@ -31,7 +31,7 @@ const SignIn = () => {
               <p className="text-xl">Sign-Up</p>
               <AuthForm formType={formType} />
               <p>Already have an account ?
-              <button className='cursor-pointer bg-white !py-1 !mx-2' onClick={handleChangeFormType}>Sign-In</button>
+              <button className='cursor-pointer text-white bg-black !py-1 !mx-2' onClick={handleChangeFormType}>Sign-In</button>
             </p>
             </section>
           )}
