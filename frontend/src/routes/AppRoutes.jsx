@@ -8,7 +8,7 @@ import Library from '../pages/Library';
 import SignIn from '../pages/SignIn';
 import Reviews from '../pages/Reviews';
 
-export default function AppRoutes() {
+export default function AppRoutes({ isDarkMode }) {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
