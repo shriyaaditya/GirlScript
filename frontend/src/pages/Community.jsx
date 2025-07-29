@@ -227,7 +227,7 @@ const Community = () => {
                         </span>
                       </div>
                       {isLoggedIn ? (
-                        <Link to={`/club/${club.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} className="btn btn-primary btn-join">
+                        <Link to={`/club`} className="btn btn-primary btn-join" onClick={() => window.scrollTo(0, 0)}>
                           Join Club
                         </Link>
                       ) : (

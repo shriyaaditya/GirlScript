@@ -294,6 +294,7 @@ body {
     transform: translateY(-2px);
     box-shadow: var(--community-shadow-lg);
     border: var(--primary-600);
+    color: #fff;
 }
 
 [data-theme="dark"] .btn-primary {
