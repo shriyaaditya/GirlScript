@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, BookMarked, BookOpen, Menu, X, Sun, Moon } from "lucide-react";
+import { Home, Search, BookMarked, BookOpen, Menu, X, Sun, Moon , Users } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { IoLibraryOutline } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
@@ -78,6 +78,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
               { path: "/", label: "Home", icon: <Home size={18} /> },
               { path: "/explore", label: "Explore", icon: <Search size={18} /> },
               { path: "/genres", label: "Genres", icon: <BookMarked size={18} /> },
+              { path: "/community", label: "Community", icon: <Users size={18} /> },
               ...(isLoggedIn ? [{ path: "/library", label: "Your Library", icon: <IoLibraryOutline size={18} /> }] : []),
             ].map(({ path, label, icon }) => (
               <Link
@@ -130,6 +131,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                 { path: "/", label: "Home", icon: <Home size={20} /> },
                 { path: "/explore", label: "Explore", icon: <Search size={20} /> },
                 { path: "/genres", label: "Genres", icon: <BookMarked size={20} /> },
+                { path: "/community", label: "Community", icon: <Users size={20} /> },
                 ...(isLoggedIn ? [{ path: "/library", label: "Your Library", icon: <IoLibraryOutline size={20} /> }] : []),
               ].map(({ path, label, icon }) => (
                 <Link
