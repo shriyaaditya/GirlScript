@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { Users, BookOpen, Crown, Search, Star, MessageSquareText, Handshake, Compass ,Zap, } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import "./Community.css";
+import "./community.css";
 
 // Import club images
 import classicReadsClub from "./../assets/book-club.png";

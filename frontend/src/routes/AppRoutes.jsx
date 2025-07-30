@@ -10,7 +10,7 @@ import Reviews from '../pages/Reviews';
 import Community from '../pages/Community';
 import ClubPage from '../pages/ClubPage';
 
-export default function AppRoutes({ isDarkMode }) {
+export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />

@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { FaBookOpen, FaPen, FaSearch, FaLightbulb, FaBookReader, FaGlobe, FaStar, FaLink } from "react-icons/fa";
 import { searchBooks, getAutocompleteSuggestions } from "../services/bookService";
-import { toast } from "react-toastify";
 import BookCard from "../components/BookCard";
 import NoBookFound from "../components/NoBookFound";
 import SearchAutocomplete from "../components/SearchAutocomplete";
@@ -130,7 +129,7 @@ export default function Explore() {
       setQuery(genreParam);
       handleSearch({ preventDefault: () => { } }, genreParam, 0);
     }
-  }, [searchParams]);
+  }, [searchParams, handleSearch, setQuery]);
 
 const popularBookSearches = [
   "Harry Potter",
@@ -189,7 +188,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
       },
       body: JSON.stringify(bookData),
     })
-    const data = await res.json();
+    const _data = await res.json();
     // if(data.success){
     //   toast.success(data.message);
     // }else{
