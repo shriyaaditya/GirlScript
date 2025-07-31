@@ -23,7 +23,8 @@ const ReviewModal = ({ isOpen, onClose, google_book_id, onRefresh, loggedIn }) =
             // Use userId as needed
             // console.log("User ID:", userId);
         } catch (err) {
-            console.error("Invalid token:", err);
+            // console.error("Invalid token:", err);
+            toast.error("Authentication error");
             // Optionally remove the bad token
             localStorage.removeItem("token");
         }

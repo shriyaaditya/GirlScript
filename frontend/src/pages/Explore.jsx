@@ -59,7 +59,7 @@ export default function Explore() {
         const results = await getAutocompleteSuggestions(searchQuery, searchType);
         setSuggestions(results);
       } catch (error) {
-        console.error("Error getting suggestions:", error);
+        // console.error("Error getting suggestions:", error);
         setSuggestions([]);
       } finally {
         setLoadingSuggestions(false);
@@ -113,7 +113,8 @@ export default function Explore() {
         setTotalItems(response.totalItems || 0);
         setCurrentPage(page + 1); // Convert to 1-based for UI
       } catch (error) {
-        console.error("Failed to fetch books:", error);
+        // console.error("Failed to fetch books:", error);
+        toast.error("Failed to fetch books");
         setBooks([]);
         setTotalItems(0);
       } finally {

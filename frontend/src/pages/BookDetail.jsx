@@ -23,7 +23,7 @@ export default function BookDetail() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Failed to fetch book details:", error);
+        // console.error("Failed to fetch book details:", error);
         setLoading(false);
       });
   }, [id]);

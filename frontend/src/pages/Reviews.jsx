@@ -29,14 +29,16 @@ const Reviews = () => {
                 })
                 const data = await res.json();
                 if(data.success){
-                    setReviews(data.reviews);
                     // console.log("Reviews fetched successfully: ", data.reviews);
+                    setReviews(data.reviews);
                 }else{
-                    console.error("Failed to fetch reviews: ", data.message);
+                    // console.error("Failed to fetch reviews: ", data.message);
+                    toast.error(data.message);
                     setReviews([]);
                 }
             }catch(error){
-                console.error("Error fetching reviews: ", error);
+                // console.error("Error fetching reviews: ", error);
+                toast.error("Failed to fetch reviews");
             }
         };
 

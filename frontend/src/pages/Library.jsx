@@ -46,7 +46,7 @@ const Library = () => {
                         setSearchResults([]);
                     }
                 } catch (error) {
-                    console.error("Search error:", error);
+                    // console.error("Search error:", error);
                     setGotSearchResult(false);
                     setSearchResults([]);
                 }

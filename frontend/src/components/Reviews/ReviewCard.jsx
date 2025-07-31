@@ -51,7 +51,8 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
           // console.log("User details fetched successfully: ", data.user);
         }
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        // console.error("Error fetching user details:", error);
+        toast.error("Failed to fetch user details");
       }
     }
 
@@ -91,7 +92,8 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
       onRefresh();
     }
   } catch (err) {
-    console.error(err);
+    // console.error(err);
+    toast.error("Failed to update like");
   }
 };
 
