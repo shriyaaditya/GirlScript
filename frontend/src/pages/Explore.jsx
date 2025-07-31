@@ -7,6 +7,8 @@ import BookCard from "../components/BookCard";
 import NoBookFound from "../components/NoBookFound";
 import SearchAutocomplete from "../components/SearchAutocomplete";
 import Pagination from "../components/Pagination";
+import SortAndFilterControls from "../components/SortAndFilterControls";
+import { loadFilterPreferences, saveFilterPreferences } from "../utils/filterPreferences";
 import styles from "./Explore.module.css";
 
 export default function Explore() {
@@ -25,8 +27,28 @@ export default function Explore() {
   const [totalItems, setTotalItems] = useState(0);
   const maxResultsPerPage = 10;
 
+  // Load saved filter preferences on component mount
+  const savedPreferences = loadFilterPreferences();
+
+  // Sort and filter state with saved preferences as defaults
+  const [sortBy, setSortBy] = useState(savedPreferences.sortBy);
+  const [filterBy, setFilterBy] = useState(savedPreferences.filterBy);
+  const [printType, setPrintType] = useState(savedPreferences.printType);
+  const [langRestrict, setLangRestrict] = useState(savedPreferences.langRestrict);
+
   // Calculate total pages
   const totalPages = Math.ceil(totalItems / maxResultsPerPage);
+
+  // Save preferences whenever filter state changes
+  useEffect(() => {
+    const currentPreferences = {
+      sortBy,
+      filterBy,
+      printType,
+      langRestrict
+    };
+    saveFilterPreferences(currentPreferences);
+  }, [sortBy, filterBy, printType, langRestrict]);
 
   // Function to handle page changes
   const handlePageChange = (newPage) => {
@@ -102,10 +124,19 @@ export default function Explore() {
         const startIndex = page * maxResultsPerPage;
         // If searching for authors, add the inauthor: prefix
         const finalQuery = searchType === 'authors' ? `inauthor:${searchQuery}` : searchQuery;
+        
+        // Build options object for API call
+        const options = {};
+        if (sortBy !== 'relevance') options.orderBy = sortBy;
+        if (filterBy) options.filter = filterBy;
+        if (printType !== 'all') options.printType = printType;
+        if (langRestrict) options.langRestrict = langRestrict;
+
         const response = await searchBooks(
           finalQuery,
           startIndex,
-          maxResultsPerPage
+          maxResultsPerPage,
+          options
         );
 
         setBooks(response.items || []);
@@ -119,7 +150,7 @@ export default function Explore() {
         setLoading(false);
       }
     },
-    [query, maxResultsPerPage, searchType]
+    [query, maxResultsPerPage, searchType, sortBy, filterBy, printType, langRestrict]
   );
 
   // Handle genre filtering from URL params
@@ -165,10 +196,19 @@ const famousAuthors = [
 const popularSearches = searchType === 'books' ? popularBookSearches : famousAuthors;
 
 
+  // Handle quick search from popular searches
   const handleQuickSearch = (term) => {
     setQuery(term);
     handleSearch({ preventDefault: () => { } }, term);
   };
+
+  // Handle filter changes - triggers a new search with current query
+  const handleApplyFilters = useCallback(() => {
+    if (query.trim() && searched) {
+      setCurrentPage(1); // Reset to first page when filters change
+      handleSearch(null, query, 0);
+    }
+  }, [query, searched, handleSearch]);
 
   const handleCreateBookGenerally = async (book) => {
     // console.log("Creating book generally:", book);
@@ -316,6 +356,26 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
             </div>
         </section>
 
+        {/* Sort and Filter Controls - only show after a search has been performed */}
+        {searched && !loading && books.length > 0 && (
+          <section className="pb-6">
+            <div className="container-modern">
+              <SortAndFilterControls
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                filterBy={filterBy}
+                setFilterBy={setFilterBy}
+                printType={printType}
+                setPrintType={setPrintType}
+                langRestrict={langRestrict}
+                setLangRestrict={setLangRestrict}
+                onApplyFilters={handleApplyFilters}
+                isLoading={loading}
+              />
+            </div>
+          </section>
+        )}
+
         {/* Results Section */}
         <section className="pb-16 results-section">
           <div className="container-modern flex flex-col items-center">
@@ -406,12 +466,45 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                   >
                     Found {totalItems} Amazing Books! <FaBookOpen className="inline ml-1" />
                   </h2>
-                  <p
-                    className="text-body !mb-3"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {query && `Results for "${query}"`}
-                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <p
+                      className="text-body !mb-3"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {query && `Results for "${query}"`}
+                    </p>
+                    
+                    {/* Active filters summary */}
+                    {(sortBy !== 'relevance' || filterBy || printType !== 'all' || langRestrict) && (
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        <span className="text-gray-600">Filtered by:</span>
+                        {sortBy !== 'relevance' && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            {sortBy === 'newest' ? 'Newest' : sortBy}
+                          </span>
+                        )}
+                        {filterBy && (
+                          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                            {filterBy === 'free-ebooks' ? 'Free' : 
+                             filterBy === 'paid-ebooks' ? 'Paid' :
+                             filterBy === 'ebooks' ? 'eBooks' :
+                             filterBy === 'full' ? 'Full Text' :
+                             filterBy === 'partial' ? 'Preview' : filterBy}
+                          </span>
+                        )}
+                        {printType !== 'all' && (
+                          <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                            {printType === 'books' ? 'Books' : 'Magazines'}
+                          </span>
+                        )}
+                        {langRestrict && (
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
+                            {langRestrict.toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid-modern grid-3">
