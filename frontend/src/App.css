@@ -1418,7 +1418,7 @@ body {
   color: var(--text-primary);
 }
 
-[data-theme="dark"] *:not(.preserve-white-text) {
+[data-theme="dark"] *:not(.preserve-white-text):not(.community-page *) {
   color: inherit !important;
 }
 

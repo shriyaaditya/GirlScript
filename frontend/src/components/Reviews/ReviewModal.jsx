@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 Modal.setAppElement('#root');
 
-const ReviewModal = ({ isOpen, onClose, google_book_id, onRefresh, loggedIn }) => {
+const ReviewModal = ({ isOpen, onClose, google_book_id, onRefresh}) => {
     const [review, setReview] = useState("");
     const [rating, setRating] = useState(0);
     const [userId, setUserId] = useState("");

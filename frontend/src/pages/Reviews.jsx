@@ -51,7 +51,7 @@ const Reviews = () => {
 
         fetchReviews();
         setLoading(false);
-    }, [refreshKey]);
+    }, [id, refreshKey]);
 
     if (!loggedIn) {
         return (
