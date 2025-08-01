@@ -36,6 +36,7 @@ const Reviews = () => {
                     toast.error(data.message);
                     setReviews([]);
                 }
+            // eslint-disable-next-line no-unused-vars
             }catch(error){
                 // console.error("Error fetching reviews: ", error);
                 toast.error("Failed to fetch reviews");

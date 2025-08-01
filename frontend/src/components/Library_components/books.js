@@ -35,6 +35,7 @@ const useLibraryBooks = (trigger) => {
         setCurrentlyReading(current);
         setNextUp(upcoming);
         setFinished(done);
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         // console.error("Error fetching books:", error.message);
         toast.error("Failed to fetch books");

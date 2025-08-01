@@ -50,6 +50,7 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
           setUserName(data.user.name);
           // console.log("User details fetched successfully: ", data.user);
         }
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         // console.error("Error fetching user details:", error);
         toast.error("Failed to fetch user details");
@@ -91,6 +92,7 @@ const ReviewCard = ({ user_id, book_id, rating, review_text, createdAt, updatedA
       // console.log(hasLiked, likes);
       onRefresh();
     }
+  // eslint-disable-next-line no-unused-vars
   } catch (err) {
     // console.error(err);
     toast.error("Failed to update like");
