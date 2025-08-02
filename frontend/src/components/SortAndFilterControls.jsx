@@ -53,34 +53,49 @@ const SortAndFilterControls = ({
 
   const handleSortChange = (value) => {
     setSortBy(value);
-    onApplyFilters();
+    // Call onApplyFilters with the new sort value
+    const newFilters = { sortBy: value, filterBy, printType, langRestrict };
+    onApplyFilters(newFilters);
   };
 
   const handleFilterChange = (value) => {
     setFilterBy(value);
-    onApplyFilters();
+    // Call onApplyFilters with the new filter value
+    const newFilters = { sortBy, filterBy: value, printType, langRestrict };
+    onApplyFilters(newFilters);
   };
 
   const handlePrintTypeChange = (value) => {
     setPrintType(value);
-    onApplyFilters();
+    // Call onApplyFilters with the new print type value
+    const newFilters = { sortBy, filterBy, printType: value, langRestrict };
+    onApplyFilters(newFilters);
   };
 
   const handleLanguageChange = (value) => {
     setLangRestrict(value);
-    onApplyFilters();
+    // Call onApplyFilters with the new language value
+    const newFilters = { sortBy, filterBy, printType, langRestrict: value };
+    onApplyFilters(newFilters);
   };
 
   const handleQuickFilter = (filters) => {
+    // Create the new filter state by merging current state with the new filters
+    const newFilters = {
+      sortBy: filters.sortBy !== undefined ? filters.sortBy : sortBy,
+      filterBy: filters.filterBy !== undefined ? filters.filterBy : filterBy,
+      printType: filters.printType !== undefined ? filters.printType : printType,
+      langRestrict: filters.langRestrict !== undefined ? filters.langRestrict : langRestrict
+    };
+
+    // Update all states that are defined in the filters object
     if (filters.sortBy !== undefined) setSortBy(filters.sortBy);
     if (filters.filterBy !== undefined) setFilterBy(filters.filterBy);
     if (filters.printType !== undefined) setPrintType(filters.printType);
     if (filters.langRestrict !== undefined) setLangRestrict(filters.langRestrict);
     
-    // Trigger the search after a short delay to ensure all state updates are applied
-    setTimeout(() => {
-      onApplyFilters();
-    }, 50);
+    // Call onApplyFilters with the new filter state immediately
+    onApplyFilters(newFilters);
   };
 
   const SelectDropdown = ({ label, value, options, onChange, icon }) => (
@@ -223,11 +238,19 @@ const SortAndFilterControls = ({
             )}
             <button
               onClick={() => {
+                // Reset all filters
                 setSortBy('relevance');
                 setFilterBy('');
                 setPrintType('all');
                 setLangRestrict('');
-                onApplyFilters();
+                // Call onApplyFilters with the reset values
+                const resetFilters = { 
+                  sortBy: 'relevance', 
+                  filterBy: '', 
+                  printType: 'all', 
+                  langRestrict: '' 
+                };
+                onApplyFilters(resetFilters);
               }}
               className="clear-filters-btn px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 hover:transform hover:scale-105"
             >

@@ -107,11 +107,12 @@ export default function Explore() {
    * @param {Event} e - The event object from the form submission
    * @param {string|null} searchTerm - The search term to use, defaults to the current query state
    * @param {number} page - The page number to fetch results
+   * @param {object} customFilters - Optional custom filter overrides
    * @description This function handles the search operation. It fetches books based on the search term and updates the state accordingly.
    * It also handles pagination by calculating the start index based on the current page and maximum results per page.
    */
   const handleSearch = useCallback(
-    async (e, searchTerm = null, page = 0) => {
+    async (e, searchTerm = null, page = 0, customFilters = null) => {
       if (e && e.preventDefault) e.preventDefault();
       const searchQuery = searchTerm || query;
       if (!searchQuery.trim()) return;
@@ -125,12 +126,15 @@ export default function Explore() {
         // If searching for authors, add the inauthor: prefix
         const finalQuery = searchType === 'authors' ? `inauthor:${searchQuery}` : searchQuery;
         
+        // Use custom filters if provided, otherwise use current state
+        const currentFilters = customFilters || { sortBy, filterBy, printType, langRestrict };
+        
         // Build options object for API call
         const options = {};
-        if (sortBy !== 'relevance') options.orderBy = sortBy;
-        if (filterBy) options.filter = filterBy;
-        if (printType !== 'all') options.printType = printType;
-        if (langRestrict) options.langRestrict = langRestrict;
+        if (currentFilters.sortBy !== 'relevance') options.orderBy = currentFilters.sortBy;
+        if (currentFilters.filterBy) options.filter = currentFilters.filterBy;
+        if (currentFilters.printType !== 'all') options.printType = currentFilters.printType;
+        if (currentFilters.langRestrict) options.langRestrict = currentFilters.langRestrict;
 
         const response = await searchBooks(
           finalQuery,
@@ -158,9 +162,36 @@ export default function Explore() {
     const genreParam = searchParams.get("genre");
     if (genreParam) {
       setQuery(genreParam);
-      handleSearch({ preventDefault: () => { } }, genreParam, 0);
+      setSearched(true);
+      setLoading(true);
+      
+      // Perform the search directly here to avoid circular dependencies
+      const performGenreSearch = async () => {
+        try {
+          // Build options object carefully - only include defined values
+          const options = {};
+          if (sortBy && sortBy !== 'relevance') options.orderBy = sortBy;
+          if (filterBy) options.filter = filterBy;
+          if (printType && printType !== 'all') options.printType = printType;
+          if (langRestrict) options.langRestrict = langRestrict;
+          
+          const response = await searchBooks(genreParam, 0, maxResultsPerPage, options);
+          
+          setBooks(response.items || []);
+          setTotalItems(response.totalItems || 0);
+          setCurrentPage(1);
+        } catch (error) {
+          console.error("Failed to fetch genre books:", error);
+          setBooks([]);
+          setTotalItems(0);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      performGenreSearch();
     }
-  }, [searchParams, handleSearch, setQuery]);
+  }, [searchParams, maxResultsPerPage, sortBy, filterBy, printType, langRestrict]);
 
 const popularBookSearches = [
   "Harry Potter",
@@ -203,12 +234,14 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
   };
 
   // Handle filter changes - triggers a new search with current query
-  const handleApplyFilters = useCallback(() => {
+  const handleApplyFilters = useCallback((customFilters = null) => {
     if (query.trim() && searched) {
       setCurrentPage(1); // Reset to first page when filters change
-      handleSearch(null, query, 0);
+      // Use custom filters if provided, otherwise use current state
+      const filtersToUse = customFilters || { sortBy, filterBy, printType, langRestrict };
+      handleSearch(null, query, 0, filtersToUse);
     }
-  }, [query, searched, handleSearch]);
+  }, [query, searched, sortBy, filterBy, printType, langRestrict, handleSearch]);
 
   const handleCreateBookGenerally = async (book) => {
     // console.log("Creating book generally:", book);
@@ -396,7 +429,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                     className="text-body"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    Finding the perfect books for you...
+                    {query ? `Searching for "${query}"...` : 'Finding the perfect books for you...'}
                   </p>
                   <div className="mt-6">
                     <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
@@ -417,7 +450,7 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                       className="text-heading-2 mb-4"
                       style={{ color: "var(--text-primary)" }}
                     >
-                      No Books Found
+                      No Books Found for "{query}"
                     </h3>
                   </div>
                   <div className="flex flex-col items-center justify-center p-8 gap-y-8">
@@ -425,15 +458,17 @@ const popularSearches = searchType === 'books' ? popularBookSearches : famousAut
                       className="text-body mb-6"
                       style={{ color: "var(--text-secondary)" }}
                     >
-                      We couldn't find any books matching your search. Try different
-                      keywords or browse our popular genres.
+                      We searched our database but couldn't find any books matching "{query}". 
+                      This might be due to:
                     </p>
-                    <div className="space-y-8">
-                      <p className="glass-effect text-xs !p-3 rounded-xl !border !border-red-400 border-opacity-30">
-                        <FaLightbulb className="inline mr-1" /> Make sure your Google Books API key is properly
-                        configured
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <div className="space-y-4">
+                      <ul className="text-left text-sm text-gray-600 space-y-2">
+                        <li>• The search term might be too specific</li>
+                        <li>• Try using broader keywords</li>
+                        <li>• Check for spelling errors</li>
+                        <li>• Try searching by author instead</li>
+                      </ul>
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                         <button
                           onClick={() => {
                             setQuery("");

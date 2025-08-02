@@ -28,22 +28,22 @@ export const searchBooks = async (
   let url = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}&startIndex=${startIndex}&maxResults=${maxResults}&key=${apiKey}`;
 
   // Add sorting parameter
-  if (options.orderBy) {
+  if (options.orderBy && options.orderBy !== 'undefined') {
     url += `&orderBy=${options.orderBy}`;
   }
 
   // Add filter parameter
-  if (options.filter) {
+  if (options.filter && options.filter !== 'undefined') {
     url += `&filter=${options.filter}`;
   }
 
   // Add print type parameter
-  if (options.printType) {
+  if (options.printType && options.printType !== 'undefined') {
     url += `&printType=${options.printType}`;
   }
 
   // Add language restriction
-  if (options.langRestrict) {
+  if (options.langRestrict && options.langRestrict !== 'undefined') {
     url += `&langRestrict=${options.langRestrict}`;
   }
 
