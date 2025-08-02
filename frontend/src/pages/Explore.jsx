@@ -7,8 +7,12 @@ import BookCard from "../components/BookCard";
 import NoBookFound from "../components/NoBookFound";
 import SearchAutocomplete from "../components/SearchAutocomplete";
 import Pagination from "../components/Pagination";
+
 import SortAndFilterControls from "../components/SortAndFilterControls";
 import { loadFilterPreferences, saveFilterPreferences } from "../utils/filterPreferences";
+
+import { toast } from "react-toastify";
+
 import styles from "./Explore.module.css";
 
 export default function Explore() {
@@ -79,8 +83,9 @@ export default function Explore() {
       try {
         const results = await getAutocompleteSuggestions(searchQuery, searchType);
         setSuggestions(results);
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
-        console.error("Error getting suggestions:", error);
+        // console.error("Error getting suggestions:", error);
         setSuggestions([]);
       } finally {
         setLoadingSuggestions(false);
@@ -146,8 +151,10 @@ export default function Explore() {
         setBooks(response.items || []);
         setTotalItems(response.totalItems || 0);
         setCurrentPage(page + 1); // Convert to 1-based for UI
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
-        console.error("Failed to fetch books:", error);
+        // console.error("Failed to fetch books:", error);
+        toast.error("Failed to fetch books");
         setBooks([]);
         setTotalItems(0);
       } finally {
