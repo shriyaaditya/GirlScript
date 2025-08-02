@@ -41,8 +41,9 @@ export default function BookDetail() {
         setBook(data);
         setLoading(false);
       })
+      // eslint-disable-next-line no-unused-vars
       .catch((error) => {
-        console.error("Failed to fetch book details:", error);
+        // console.error("Failed to fetch book details:", error);
         setLoading(false);
       });
   }, [id]);
@@ -51,7 +52,7 @@ export default function BookDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+      <div className="min-h-screen flex items-center justify-items-center bg-gray-50 p-6">
         <div className={`${cardBaseClasses} max-w-md text-center`}>
           <div className="animate-bounce text-6xl mb-6">📚</div>
           <h3 className="text-2xl font-bold text-gray-800 mb-4">Loading Book Details</h3>
@@ -116,7 +117,7 @@ export default function BookDetail() {
     <div className="min-h-screen bg-gray-50 font-sans antialiased">
       {/* Navigation */}
       <section className="!py-8 bg-white shadow-sm">
-        <div className="!max-w-7xl mx-auto !px-4 !sm:px-6 !lg:px-8 flex justify-between items-center">
+        <div className="!max-w-7xl mx-auto !px-4 !sm:px-6 !lg:px-8 flex flex-wrap justify-between items-center gap-4">
           <Link
             to="/explore"
             className="inline-flex items-center !px-4 !py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 no-underline"
@@ -134,7 +135,7 @@ export default function BookDetail() {
         </div>
       </section>
 
-      <section className="!py-12 !px-17 !md:py-16">
+      <section className="!py-12 !px-17 !md:py-16 justify-items-center">
         <div className="max-w-7xl mx-auto !px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 !gap-12 lg:gap-16">
 
@@ -157,7 +158,7 @@ export default function BookDetail() {
                   )}
                 </div>
 
-                <div className="w-full grid grid-cols-2 !gap-4 text-center !mb-8">
+                <div className="w-full grid grid-cols-1  md:grid-cols-2 !gap-4 text-center !mb-8">
                   {info.averageRating && (
                     <div className="bg-blue-50 text-blue-700 !p-4 rounded-lg flex flex-col items-center justify-center shadow-sm">
 
@@ -331,54 +332,28 @@ export default function BookDetail() {
                 </section>
                )}
 
+                <section className={`${cardBaseClasses} border-l-4 border-indigo-500`}> 
 
-
-
-
-
-             {/* ********************************* */}
-
-              {/* {(info.publisher || info.publishedDate) && (
-                <section className={cardBaseClasses}>
-                  <h3 className="text-2xl font-bold text-gray-800 !mb-4 flex items-center gap-3">
-                    <span className="text-green-500 text-3xl">🏢</span>
-                    Publisher Information
-                  </h3>
-                  {info.publisher && (
-                    <p className="text-gray-700 text-lg">{info.publisher}</p>
-                  )}
-                  {info.publishedDate && (
-                    <p className="text-gray-500 text-sm !mt-1">
-                      Published on {new Date(info.publishedDate).toLocaleDateString()}
-                    </p>
-                  )}
                   
-                </section>
-              )}
-
-              {(info.industryIdentifiers || info.pageCount || info.printType || info.maturityRating || info.contentVersion) && (
-                <section className={cardBaseClasses}>
-                  <h3 className="text-2xl font-bold text-gray-800 !mb-4 flex items-center gap-3">
-                    <span className="text-purple-500 text-3xl">📊</span>
-                    More Details
-                  </h3>
-                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                    {[
-                      { label: 'ISBN-10', value: info.industryIdentifiers?.find(id => id.type === 'ISBN_10')?.identifier },
-                      { label: 'ISBN-13', value: info.industryIdentifiers?.find(id => id.type === 'ISBN_13')?.identifier },
-                      { label: 'Page Count', value: info.pageCount ? `${info.pageCount} pages` : null },
-                      { label: 'Print Type', value: info.printType },
-                      { label: 'Maturity Rating', value: info.maturityRating },
-                      { label: 'Content Version', value: info.contentVersion }
-                    ].filter(item => item.value).map((item, index) => (
-                      <div key={index} className="flex flex-col">
-                        <span className="text-gray-500 text-sm font-medium">{item.label}:</span>
-                        <span className="text-gray-800 text-lg font-semibold">{item.value}</span>
+                <div className=' grid grid-cols-1'>
+                  {[
+                    {
+                      icon: <DriveFileRenameOutlineOutlinedIcon className="!text-3xl"/>,
+                      title: 'User Reviews & Ratings',
+                      description: 'Read and write detailed reviews from fellow readers'
+                    },
+                  ].map((feature, index) => (
+                    <Link to={`/book/${id}/reviews`} key={index} className="bg-gray-50 !p-6 rounded-lg shadow-sm flex items-start space-x-4 w-full">
+                      <div className="text-4xl">{feature.icon}</div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-800 !mb-1">{feature.title}</h4>
+                        <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
                       </div>
-                    ))}
-                  </div>
-                </section>
-              )} */}
+                    </Link>
+                  ))}
+                </div>
+                  </section>
+
 
               <section className={`${cardBaseClasses} border-l-4 border-indigo-500`}> {/* Accent border */}
                 <h3 className="text-2xl font-bold text-gray-800 !mb-6 flex items-center gap-3">
@@ -387,16 +362,16 @@ export default function BookDetail() {
                 </h3>
                 <div className="grid md:grid-cols-2 !gap-6">
                   {[
-                    {
-                      icon: <DriveFileRenameOutlineOutlinedIcon className="!text-3xl"/>,
-                      title: 'User Reviews & Ratings',
-                      description: 'Read and write detailed reviews from fellow readers'
-                    },
-                    {
-                      icon: <CollectionsBookmarkOutlinedIcon className="!text-3xl"/>,
-                      title: 'Personal Library',
-                      description: 'Add books to your reading lists and track progress'
-                    },
+                    // {
+                    //   icon: <DriveFileRenameOutlineOutlinedIcon className="!text-3xl"/>,
+                    //   title: 'User Reviews & Ratings',
+                    //   description: 'Read and write detailed reviews from fellow readers'
+                    // },
+                    // {
+                    //   icon: <CollectionsBookmarkOutlinedIcon className="!text-3xl"/>,
+                    //   title: 'Personal Library',
+                    //   description: 'Add books to your reading lists and track progress'
+                    // },
                     {
                       icon: <RecommendOutlinedIcon className="!text-3xl"/>,
                       title: 'Smart Recommendations',
@@ -422,7 +397,7 @@ export default function BookDetail() {
 
             </div>
           </div>
-          <div className={"`${cardBaseClasses}` !mt-8"}>
+          <div className={"`${cardBaseClasses}` !mt-2"}>
             <AuthorRecommendations
               currentBookId={id}
               author={info.authors}
